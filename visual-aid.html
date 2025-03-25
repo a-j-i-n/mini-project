@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Cube Visual Aid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        #image-box {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        #move-info {
+            font-size: 24px;
+            margin: 10px;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #progress {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rubik's Cube Solution Visual Guide</h1>
+    <div id="move-info">Move: None</div>
+    <div id="image-box"></div>
+    <div id="progress">Move 0 of 0</div>
+    <button id="nextBtn">Next Move</button>
+    <button id="prevBtn">Previous Move</button>
+
+    <script>
+        // Get solution from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const solution = urlParams.get('solution') || ''; // Fallback to empty string
+        const moves = solution.split(' ').filter(move => move.trim() !== '');
+
+        let currentMoveIndex = -1;
+
+        // DOM elements
+        const imageBox = document.getElementById('image-box');
+        const moveInfo = document.getElementById('move-info');
+        const progressInfo = document.getElementById('progress');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+
+        function showMove(index) {
+            if (index < 0 || index >= moves.length) return;
+            
+            currentMoveIndex = index;
+            const move = moves[currentMoveIndex];
+            
+            // Update UI
+            moveInfo.textContent = `Move: ${move}`;
+            progressInfo.textContent = `Move ${currentMoveIndex + 1} of ${moves.length}`;
+            
+            // Load corresponding image (assuming images are named like "U2.jpg", "L3.jpg", etc.)
+            imageBox.style.backgroundImage = `url('images/${move}.jpg')`;
+            console.log(move)
+            // Disable/enable navigation buttons
+            prevBtn.disabled = currentMoveIndex <= 0;
+            nextBtn.disabled = currentMoveIndex >= moves.length - 1;
+        }
+
+        nextBtn.addEventListener('click', () => showMove(currentMoveIndex + 1));
+        prevBtn.addEventListener('click', () => showMove(currentMoveIndex - 1));
+
+        // Initialize if moves exist
+        if (moves.length > 0) {
+            showMove(0);
+        } else {
+            moveInfo.textContent = "No moves available";
+            progressInfo.textContent = "Move 0 of 0";
+            nextBtn.disabled = true;
+            prevBtn.disabled = true;
+        }
+    </script>
+</body>
+</html>
